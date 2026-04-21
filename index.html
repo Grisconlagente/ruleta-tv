@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Ruleta TV - Elige 3 números</title>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -328,9 +333,20 @@
 
     <script>
         // =====================================================
-        // CONFIGURACIÓN - PON AQUÍ TU URL DE GOOGLE APPS SCRIPT
+        // CONFIGURACIÓN DE FIREBASE
         // =====================================================
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby5-f5Qjz9jueH2iLFU7i1jYW8hCo_S-m3jIDYJmHF8IhINjS1OtdtKefCLX8AFYFzC/exec';
+        const firebaseConfig = {
+            apiKey: "AIzaSyAyhMvucHi_xQoVx2QN7WXs5bJf31yrKn4",
+            authDomain: "ruleta-tv.firebaseapp.com",
+            projectId: "ruleta-tv",
+            storageBucket: "ruleta-tv.firebasestorage.app",
+            messagingSenderId: "239258986908",
+            appId: "1:239258986908:web:b633769f9576f2a9a94059"
+        };
+        
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
         
         // Variables del jugador
         let jugadorActual = {
@@ -361,73 +377,65 @@
             return `${primerNombre}_${dni}`;
         }
         
-        // Verificar en Google Sheets si ya existe el DNI
-        async function verificarDniEnSheets(dni) {
+        // Verificar en Firebase si ya existe el DNI
+        async function verificarDniEnFirebase(dni) {
             try {
-                const respuesta = await fetch(`${GOOGLE_SCRIPT_URL}?dni=${dni}`, {
-                    method: 'GET',
-                    mode: 'cors'
-                });
-                const data = await respuesta.json();
-                return data.yaAposto === true;
+                const querySnapshot = await db.collection('apuestas')
+                    .where('dni', '==', dni)
+                    .get();
+                return !querySnapshot.empty;
             } catch(error) {
                 console.error('Error al verificar DNI:', error);
-                mostrarMensaje('Error de conexión. Intenta de nuevo', 'error');
                 return false;
             }
         }
         
-        // Verificar en Google Sheets si existe mismo DNI + misma IP
-        async function verificarDniMismaIpEnSheets(dni, ip) {
+        // Verificar en Firebase si existe mismo DNI + misma IP
+        async function verificarDniMismaIpEnFirebase(dni, ip) {
             try {
-                const respuesta = await fetch(`${GOOGLE_SCRIPT_URL}?dni=${dni}&ip=${ip}`, {
-                    method: 'GET',
-                    mode: 'cors'
-                });
-                const data = await respuesta.json();
-                return data.mismoDniMismaIp === true;
+                const querySnapshot = await db.collection('apuestas')
+                    .where('dni', '==', dni)
+                    .where('ip', '==', ip)
+                    .get();
+                return !querySnapshot.empty;
             } catch(error) {
                 console.error('Error al verificar IP:', error);
                 return false;
             }
         }
         
+        // Guardar apuesta en Firebase
+        async function guardarApuestaEnFirebase(apuesta) {
+            try {
+                await db.collection('apuestas').add({
+                    idUnico: apuesta.idUnico,
+                    nombre: apuesta.nombre,
+                    dni: apuesta.dni,
+                    celular: apuesta.celular,
+                    numeros: apuesta.numeros,
+                    ip: apuesta.ip,
+                    fecha: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                return true;
+            } catch(error) {
+                console.error('Error al guardar:', error);
+                return false;
+            }
+        }
+        
         // Verificar si puede apostar
         async function verificarPuedeApostar(nombre, dni, ip) {
-            // Verificar si el DNI ya apostó
-            const dniYaAposto = await verificarDniEnSheets(dni);
+            const dniYaAposto = await verificarDniEnFirebase(dni);
             if (dniYaAposto) {
                 return { permitido: false, razon: 'Ya realizaste tu apuesta esta semana' };
             }
             
-            // Verificar si el mismo DNI + misma IP ya existe (fraude)
-            const mismoDniMismaIp = await verificarDniMismaIpEnSheets(dni, ip);
+            const mismoDniMismaIp = await verificarDniMismaIpEnFirebase(dni, ip);
             if (mismoDniMismaIp && ip !== 'desconocida') {
                 return { permitido: false, razon: '⚠️ Ya se registró una apuesta con este DNI desde este dispositivo.' };
             }
             
             return { permitido: true, razon: '' };
-        }
-        
-        // Guardar apuesta en Google Sheets
-        async function guardarApuestaEnSheets(apuesta) {
-            try {
-                const respuesta = await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(apuesta)
-                });
-                
-                const resultado = await respuesta.json();
-                return resultado.success === true;
-                
-            } catch(error) {
-                console.error('Error al guardar:', error);
-                return false;
-            }
         }
         
         // Generar tablero
@@ -521,7 +529,6 @@
             
             const ip = await obtenerIP();
             
-            // Verificar en Google Sheets
             const verificacion = await verificarPuedeApostar(nombre, dni, ip);
             
             if (!verificacion.permitido) {
@@ -567,13 +574,12 @@
                 dni: jugadorActual.dni,
                 celular: jugadorActual.celular,
                 numeros: jugadorActual.numeros.join(','),
-                ip: jugadorActual.ip,
-                fecha: new Date().toISOString()
+                ip: jugadorActual.ip
             };
             
-            mostrarMensaje('Guardando apuesta...', 'success');
+            mostrarMensaje('Guardando apuesta en Firebase...', 'success');
             
-            const guardado = await guardarApuestaEnSheets(nuevaApuesta);
+            const guardado = await guardarApuestaEnFirebase(nuevaApuesta);
             
             if (guardado) {
                 const numerosTexto = jugadorActual.numeros.join(', ');
@@ -589,7 +595,7 @@
                 document.getElementById('exitoScreen').classList.remove('hidden');
                 
                 if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-                mostrarMensaje('✅ ¡Apuesta registrada en Google Sheets!', 'success');
+                mostrarMensaje('✅ ¡Apuesta registrada en Firebase!', 'success');
             } else {
                 mostrarMensaje('❌ Error al guardar. Intenta nuevamente', 'error');
             }
@@ -635,8 +641,7 @@
             }
         }
         
-        console.log('✅ Página publicada - Con CORS habilitado y verificación completa');
-        console.log('URL de Google Script:', GOOGLE_SCRIPT_URL);
+        console.log('✅ Firebase conectado correctamente');
     </script>
 </body>
 </html>
