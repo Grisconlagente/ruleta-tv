@@ -481,12 +481,23 @@
             }
         }
         
-        async function verificarPuedeApostar(dni) {
-            const dniYaAposto = await verificarDniEnFirebase(dni);
-            if (dniYaAposto) {
-                return { permitido: false, razon: 'Ya realizaste tu apuesta esta semana' };
+        async function verificarPuedeApostar(nombre, dni) {
+            const idUnico = crearIdUnico(nombre, dni);
+            
+            try {
+                const querySnapshot = await db.collection('apuestas')
+                    .where('idUnico', '==', idUnico)
+                    .get();
+                
+                if (!querySnapshot.empty) {
+                    return { permitido: false, razon: 'Ya realizaste tu apuesta esta semana' };
+                }
+                
+                return { permitido: true, razon: '' };
+            } catch(error) {
+                console.error('Error:', error);
+                return { permitido: false, razon: 'Error de verificación' };
             }
-            return { permitido: true, razon: '' };
         }
         
         function generarTablero() {
@@ -587,7 +598,7 @@
             mostrarMensaje('Verificando...', 'success');
             
             const ip = await obtenerIP();
-            const verificacion = await verificarPuedeApostar(dni);
+            const verificacion = await verificarPuedeApostar(nombre, dni);
             
             if (!verificacion.permitido) {
                 document.getElementById('registroScreen').classList.add('hidden');
