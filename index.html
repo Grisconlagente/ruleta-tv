@@ -392,10 +392,8 @@
             }
         }
         
-        // Verificar si puede apostar (usando Google Sheets)
+        // Verificar si puede apostar
         async function verificarPuedeApostar(nombre, dni, ip) {
-            const nuevoIdUnico = crearIdUnico(nombre, dni);
-            
             // Verificar si el DNI ya apostó
             const dniYaAposto = await verificarDniEnSheets(dni);
             if (dniYaAposto) {
@@ -573,7 +571,7 @@
                 fecha: new Date().toISOString()
             };
             
-            mostrarMensaje('Guardando apuesta en Google Sheets...', 'success');
+            mostrarMensaje('Guardando apuesta...', 'success');
             
             const guardado = await guardarApuestaEnSheets(nuevaApuesta);
             
@@ -593,7 +591,7 @@
                 if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
                 mostrarMensaje('✅ ¡Apuesta registrada en Google Sheets!', 'success');
             } else {
-                mostrarMensaje('❌ Error al guardar en Google Sheets. Intenta nuevamente', 'error');
+                mostrarMensaje('❌ Error al guardar. Intenta nuevamente', 'error');
             }
         }
         
@@ -637,7 +635,8 @@
             }
         }
         
-        console.log('✅ Página lista - Solo Google Sheets, sin almacenamiento local');
+        console.log('✅ Página publicada - Con CORS habilitado y verificación completa');
+        console.log('URL de Google Script:', GOOGLE_SCRIPT_URL);
     </script>
 </body>
 </html>
