@@ -390,20 +390,6 @@
             }
         }
         
-        // Verificar en Firebase si existe mismo DNI + misma IP
-        async function verificarDniMismaIpEnFirebase(dni, ip) {
-            try {
-                const querySnapshot = await db.collection('apuestas')
-                    .where('dni', '==', dni)
-                    .where('ip', '==', ip)
-                    .get();
-                return !querySnapshot.empty;
-            } catch(error) {
-                console.error('Error al verificar IP:', error);
-                return false;
-            }
-        }
-        
         // Guardar apuesta en Firebase
         async function guardarApuestaEnFirebase(apuesta) {
             try {
@@ -414,7 +400,7 @@
                     celular: apuesta.celular,
                     numeros: apuesta.numeros,
                     ip: apuesta.ip,
-                    fecha: firebase.firestore.FieldValue.serverTimestamp()
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 return true;
             } catch(error) {
@@ -423,18 +409,12 @@
             }
         }
         
-        // Verificar si puede apostar
+        // Verificar si puede apostar (solo verifica DNI)
         async function verificarPuedeApostar(nombre, dni, ip) {
             const dniYaAposto = await verificarDniEnFirebase(dni);
             if (dniYaAposto) {
                 return { permitido: false, razon: 'Ya realizaste tu apuesta esta semana' };
             }
-            
-            const mismoDniMismaIp = await verificarDniMismaIpEnFirebase(dni, ip);
-            if (mismoDniMismaIp && ip !== 'desconocida') {
-                return { permitido: false, razon: '⚠️ Ya se registró una apuesta con este DNI desde este dispositivo.' };
-            }
-            
             return { permitido: true, razon: '' };
         }
         
@@ -559,11 +539,27 @@
             }
         }
         
-        // Confirmar apuesta
+        // Confirmar apuesta CON PROTECCIÓN ANTIFRAUDE
         async function confirmarApuesta() {
             if (jugadorActual.numeros.length !== 3) {
                 mostrarMensaje('Elige exactamente 3 números', 'error');
                 return;
+            }
+            
+            // =====================================================
+            // PROTECCIÓN 1: Límite de tiempo entre apuestas (60 segundos)
+            // =====================================================
+            const ULTIMA_APUESTA_KEY = 'ultimaApuesta';
+            const ultimaApuesta = localStorage.getItem(ULTIMA_APUESTA_KEY);
+            
+            if (ultimaApuesta) {
+                const tiempoTranscurrido = Date.now() - parseInt(ultimaApuesta);
+                if (tiempoTranscurrido < 60000) { // 60 segundos
+                    const segundosRestantes = Math.ceil((60000 - tiempoTranscurrido) / 1000);
+                    mostrarMensaje(`⚠️ Debes esperar ${segundosRestantes} segundos entre apuestas`, 'error');
+                    if (navigator.vibrate) navigator.vibrate(200);
+                    return;
+                }
             }
             
             jugadorActual.numeros.sort((a, b) => a - b);
@@ -577,11 +573,14 @@
                 ip: jugadorActual.ip
             };
             
-            mostrarMensaje('Guardando apuesta en Firebase...', 'success');
+            mostrarMensaje('Guardando apuesta...', 'success');
             
             const guardado = await guardarApuestaEnFirebase(nuevaApuesta);
             
             if (guardado) {
+                // Guardar la hora de esta apuesta
+                localStorage.setItem(ULTIMA_APUESTA_KEY, Date.now().toString());
+                
                 const numerosTexto = jugadorActual.numeros.join(', ');
                 const resumenHTML = `
                     <p>👤 <span>${jugadorActual.nombre}</span></p>
@@ -595,7 +594,7 @@
                 document.getElementById('exitoScreen').classList.remove('hidden');
                 
                 if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-                mostrarMensaje('✅ ¡Apuesta registrada en Firebase!', 'success');
+                mostrarMensaje('✅ ¡Apuesta registrada!', 'success');
             } else {
                 mostrarMensaje('❌ Error al guardar. Intenta nuevamente', 'error');
             }
@@ -641,7 +640,7 @@
             }
         }
         
-        console.log('✅ Firebase conectado correctamente');
+        console.log('✅ Firebase conectado - Protección antifraude activa (60 segundos entre apuestas)');
     </script>
 </body>
 </html>
