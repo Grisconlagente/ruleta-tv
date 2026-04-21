@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Ruleta TV - Elige 3 números</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0a2f1f 0%, #051a0f 100%);
+            min-height: 100vh;
+            padding: 16px;
+        }
+
+        .container {
+            max-width: 550px;
+            margin: 0 auto;
+        }
+
+        .screen {
+            background: linear-gradient(145deg, #1a2a3a, #0f1a24);
+            border-radius: 32px;
+            padding: 24px 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border: 1px solid rgba(201,160,61,0.3);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        h1 {
+            font-size: 1.8em;
+            text-align: center;
+            color: #c9a03d;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 24px;
+            font-size: 0.9em;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #c9a03d;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: #0a121c;
+            border: 2px solid #2a3a4a;
+            border-radius: 16px;
+            font-size: 1em;
+            color: white;
+            transition: all 0.2s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #c9a03d;
+        }
+
+        .input-group small {
+            display: block;
+            color: #888;
+            margin-top: 6px;
+            font-size: 0.75em;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(135deg, #c9a03d, #9b7b2c);
+            border: none;
+            padding: 16px;
+            border-radius: 40px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #1a2a3a;
+            cursor: pointer;
+            transition: transform 0.1s;
+            margin-top: 16px;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.97);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            transform: none;
+            cursor: not-allowed;
+        }
+
+        .numbers-board {
+            background: #0a121c;
+            border-radius: 24px;
+            padding: 16px;
+            margin: 20px 0;
+        }
+
+        .numbers-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        .number-btn {
+            background: #1a2a3a;
+            border: 2px solid #2a3a4a;
+            border-radius: 16px;
+            padding: 16px 8px;
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.1s;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .number-btn:active {
+            transform: scale(0.95);
+        }
+
+        .number-btn.selected {
+            background: linear-gradient(135deg, #c9a03d, #9b7b2c);
+            border-color: #ffd966;
+            color: #1a1a2e;
+            transform: scale(1.02);
+        }
+
+        .selected-counter {
+            background: #0a121c;
+            border-radius: 20px;
+            padding: 16px;
+            text-align: center;
+            margin: 16px 0;
+        }
+
+        .selected-numbers {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .selected-badge {
+            background: #c9a03d;
+            color: #1a1a2e;
+            font-weight: bold;
+            font-size: 1.4em;
+            padding: 8px 20px;
+            border-radius: 40px;
+            min-width: 70px;
+            text-align: center;
+        }
+
+        .selected-badge.empty {
+            background: #2a3a4a;
+            color: #888;
+        }
+
+        .message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #27ae60;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 40px;
+            font-weight: bold;
+            display: none;
+            z-index: 1000;
+            white-space: nowrap;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .message.error {
+            background: #e74c3c;
+        }
+
+        .success-screen {
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 4em;
+            margin: 20px 0;
+        }
+
+        .apuesta-info {
+            background: #0a121c;
+            border-radius: 20px;
+            padding: 16px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .apuesta-info p {
+            margin: 10px 0;
+            color: #ddd;
+        }
+
+        .apuesta-info span {
+            color: #c9a03d;
+            font-weight: bold;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
+            }
+            .screen {
+                padding: 20px 16px;
+            }
+            h1 {
+                font-size: 1.5em;
+            }
+            .number-btn {
+                font-size: 1.1em;
+                padding: 12px 4px;
+            }
+            .selected-badge {
+                font-size: 1.2em;
+                padding: 6px 16px;
+                min-width: 60px;
+            }
+            .message {
+                white-space: normal;
+                text-align: center;
+                max-width: 90%;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <!-- PANTALLA 1: REGISTRO -->
+        <div id="registroScreen" class="screen">
+            <h1>🎰 RULETA DEL PROGRAMA 🎰</h1>
+            <div class="subtitle">¡Elige 3 números y gana!</div>
+            
+            <div class="input-group">
+                <label>👤 TU NOMBRE (como figura en tu DNI)</label>
+                <input type="text" id="nombre" placeholder="Ej: Juan" maxlength="30" autocomplete="off">
+                <small>*Solo el primer nombre</small>
+            </div>
+            
+            <div class="input-group">
+                <label>🔢 ÚLTIMOS 3 DÍGITOS DE TU DNI</label>
+                <input type="text" id="dni" placeholder="Ej: 123" maxlength="3" inputmode="numeric">
+                <small>*Tu nombre + estos 3 dígitos aseguran una sola apuesta por persona</small>
+            </div>
+            
+            <div class="input-group">
+                <label>📱 Celular (opcional)</label>
+                <input type="tel" id="celular" placeholder="Ej: 11 1234-5678" autocomplete="off">
+                <small>*Solo para contactarte si ganas</small>
+            </div>
+            
+            <button class="btn-primary" onclick="registrarJugador()">🎲 COMENZAR 🎲</button>
+        </div>
+        
+        <!-- PANTALLA 2: SELECCIONAR 3 NÚMEROS -->
+        <div id="apuestaScreen" class="screen hidden">
+            <h1>🎯 ELIGE TUS 3 NÚMEROS</h1>
+            <div class="subtitle" id="bienvenidaTexto"></div>
+            
+            <div class="selected-counter">
+                <div>📌 Números seleccionados:</div>
+                <div class="selected-numbers" id="selectedNumbersDisplay">
+                    <div class="selected-badge empty">_</div>
+                    <div class="selected-badge empty">_</div>
+                    <div class="selected-badge empty">_</div>
+                </div>
+            </div>
+            
+            <div class="numbers-board">
+                <div class="numbers-grid" id="numbersGrid"></div>
+            </div>
+            
+            <button class="btn-primary" id="confirmarBtn" onclick="confirmarApuesta()" disabled>✅ CONFIRMAR APUESTA ✅</button>
+        </div>
+        
+        <!-- PANTALLA 3: YA APOSTÓ -->
+        <div id="yaApostoScreen" class="screen hidden">
+            <h1>⚠️ YA APOSTASTE ⚠️</h1>
+            <div class="subtitle" id="yaApostoMensaje"></div>
+            <div style="text-align: center; font-size: 3em; margin: 30px 0;">🎰</div>
+            <button class="btn-primary" onclick="reiniciar()">VOLVER AL INICIO</button>
+        </div>
+        
+        <!-- PANTALLA 4: ÉXITO -->
+        <div id="exitoScreen" class="screen success-screen hidden">
+            <div class="success-icon">✅</div>
+            <h1>¡APUESTA REGISTRADA!</h1>
+            <div class="apuesta-info" id="resumenApuesta"></div>
+            <div class="subtitle">📺 Sintoniza el programa para ver el resultado</div>
+            <button class="btn-primary" onclick="reiniciar()">VOLVER AL INICIO</button>
+        </div>
+        
+    </div>
+    
+    <div id="floatingMessage" class="message"></div>
+
+    <script>
+        // =====================================================
+        // CONFIGURACIÓN - PON AQUÍ TU URL DE GOOGLE APPS SCRIPT
+        // =====================================================
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxXc-Fa8m4QxQxlom5ZHKQxIJYZIMD0E_NiWWH1RGSXAOj5LbQDtmH2W6nyRwhBrGw7/exec';
+        
+        // Variables del jugador
+        let jugadorActual = {
+            nombre: '',
+            dni: '',
+            celular: '',
+            numeros: [],
+            idUnico: '',
+            ip: ''
+        };
+        
+        // Función para obtener IP del usuario
+        async function obtenerIP() {
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                return data.ip;
+            } catch(e) {
+                return 'desconocida';
+            }
+        }
+        
+        // Función para crear ID único
+        function crearIdUnico(nombre, dni) {
+            let primerNombre = nombre.trim().split(' ')[0];
+            primerNombre = primerNombre.toLowerCase()
+                .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            return `${primerNombre}_${dni}`;
+        }
+        
+        // Verificar en Google Sheets si ya existe el DNI
+        async function verificarDniEnSheets(dni) {
+            try {
+                const respuesta = await fetch(`${GOOGLE_SCRIPT_URL}?dni=${dni}`, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                const data = await respuesta.json();
+                return data.yaAposto === true;
+            } catch(error) {
+                console.error('Error al verificar DNI:', error);
+                mostrarMensaje('Error de conexión. Intenta de nuevo', 'error');
+                return false;
+            }
+        }
+        
+        // Verificar en Google Sheets si existe mismo DNI + misma IP
+        async function verificarDniMismaIpEnSheets(dni, ip) {
+            try {
+                const respuesta = await fetch(`${GOOGLE_SCRIPT_URL}?dni=${dni}&ip=${ip}`, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                const data = await respuesta.json();
+                return data.mismoDniMismaIp === true;
+            } catch(error) {
+                console.error('Error al verificar IP:', error);
+                return false;
+            }
+        }
+        
+        // Verificar si puede apostar (usando Google Sheets)
+        async function verificarPuedeApostar(nombre, dni, ip) {
+            const nuevoIdUnico = crearIdUnico(nombre, dni);
+            
+            // Verificar si el DNI ya apostó
+            const dniYaAposto = await verificarDniEnSheets(dni);
+            if (dniYaAposto) {
+                return { permitido: false, razon: 'Ya realizaste tu apuesta esta semana' };
+            }
+            
+            // Verificar si el mismo DNI + misma IP ya existe (fraude)
+            const mismoDniMismaIp = await verificarDniMismaIpEnSheets(dni, ip);
+            if (mismoDniMismaIp && ip !== 'desconocida') {
+                return { permitido: false, razon: '⚠️ Ya se registró una apuesta con este DNI desde este dispositivo.' };
+            }
+            
+            return { permitido: true, razon: '' };
+        }
+        
+        // Guardar apuesta en Google Sheets
+        async function guardarApuestaEnSheets(apuesta) {
+            try {
+                const respuesta = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(apuesta)
+                });
+                
+                const resultado = await respuesta.json();
+                return resultado.success === true;
+                
+            } catch(error) {
+                console.error('Error al guardar:', error);
+                return false;
+            }
+        }
+        
+        // Generar tablero
+        function generarTablero() {
+            const grid = document.getElementById('numbersGrid');
+            grid.innerHTML = '';
+            
+            for (let i = 0; i <= 36; i++) {
+                const btn = document.createElement('div');
+                btn.className = 'number-btn';
+                btn.textContent = i;
+                btn.onclick = (function(num) {
+                    return function() { toggleNumero(num); };
+                })(i);
+                grid.appendChild(btn);
+            }
+        }
+        
+        // Alternar selección
+        function toggleNumero(num) {
+            const index = jugadorActual.numeros.indexOf(num);
+            
+            if (index === -1) {
+                if (jugadorActual.numeros.length >= 3) {
+                    mostrarMensaje('⚠️ Solo puedes elegir 3 números', 'error');
+                    if (navigator.vibrate) navigator.vibrate(200);
+                    return;
+                }
+                jugadorActual.numeros.push(num);
+                mostrarMensaje(`✅ Número ${num} agregado`, 'success');
+                if (navigator.vibrate) navigator.vibrate(50);
+            } else {
+                jugadorActual.numeros.splice(index, 1);
+                mostrarMensaje(`❌ Número ${num} removido`, 'success');
+                if (navigator.vibrate) navigator.vibrate(50);
+            }
+            
+            actualizarUI();
+        }
+        
+        // Actualizar UI
+        function actualizarUI() {
+            const badges = document.querySelectorAll('#selectedNumbersDisplay .selected-badge');
+            for (let i = 0; i < 3; i++) {
+                if (jugadorActual.numeros[i] !== undefined) {
+                    badges[i].textContent = jugadorActual.numeros[i];
+                    badges[i].classList.remove('empty');
+                } else {
+                    badges[i].textContent = '_';
+                    badges[i].classList.add('empty');
+                }
+            }
+            
+            const botones = document.querySelectorAll('.number-btn');
+            botones.forEach(btn => {
+                const num = parseInt(btn.textContent);
+                if (jugadorActual.numeros.includes(num)) {
+                    btn.classList.add('selected');
+                } else {
+                    btn.classList.remove('selected');
+                }
+            });
+            
+            const confirmarBtn = document.getElementById('confirmarBtn');
+            confirmarBtn.disabled = jugadorActual.numeros.length !== 3;
+        }
+        
+        // Registrar jugador
+        async function registrarJugador() {
+            const nombre = document.getElementById('nombre').value.trim();
+            const dni = document.getElementById('dni').value.trim();
+            const celular = document.getElementById('celular').value.trim();
+            
+            if (!nombre) {
+                mostrarMensaje('Ingresa tu nombre', 'error');
+                return;
+            }
+            
+            const primerNombre = nombre.split(' ')[0];
+            if (primerNombre.length < 2) {
+                mostrarMensaje('Ingresa tu nombre completo (mínimo 2 letras)', 'error');
+                return;
+            }
+            
+            if (!dni || dni.length !== 3 || !/^\d+$/.test(dni)) {
+                mostrarMensaje('Ingresa los 3 últimos dígitos de tu DNI', 'error');
+                return;
+            }
+            
+            mostrarMensaje('Verificando...', 'success');
+            
+            const ip = await obtenerIP();
+            
+            // Verificar en Google Sheets
+            const verificacion = await verificarPuedeApostar(nombre, dni, ip);
+            
+            if (!verificacion.permitido) {
+                document.getElementById('registroScreen').classList.add('hidden');
+                document.getElementById('yaApostoScreen').classList.remove('hidden');
+                document.getElementById('yaApostoMensaje').innerHTML = `${nombre}, ${verificacion.razon}<br><br>📺 Gracias por participar.`;
+                return;
+            }
+            
+            const idUnico = crearIdUnico(nombre, dni);
+            
+            jugadorActual.nombre = nombre;
+            jugadorActual.dni = dni;
+            jugadorActual.celular = celular;
+            jugadorActual.numeros = [];
+            jugadorActual.idUnico = idUnico;
+            jugadorActual.ip = ip;
+            
+            document.getElementById('registroScreen').classList.add('hidden');
+            document.getElementById('apuestaScreen').classList.remove('hidden');
+            document.getElementById('bienvenidaTexto').innerHTML = `¡Hola ${primerNombre}! Elige tus 3 números`;
+            
+            if (document.querySelectorAll('.number-btn').length === 0) {
+                generarTablero();
+            } else {
+                jugadorActual.numeros = [];
+                actualizarUI();
+            }
+        }
+        
+        // Confirmar apuesta
+        async function confirmarApuesta() {
+            if (jugadorActual.numeros.length !== 3) {
+                mostrarMensaje('Elige exactamente 3 números', 'error');
+                return;
+            }
+            
+            jugadorActual.numeros.sort((a, b) => a - b);
+            
+            const nuevaApuesta = {
+                idUnico: jugadorActual.idUnico,
+                nombre: jugadorActual.nombre,
+                dni: jugadorActual.dni,
+                celular: jugadorActual.celular,
+                numeros: jugadorActual.numeros.join(','),
+                ip: jugadorActual.ip,
+                fecha: new Date().toISOString()
+            };
+            
+            mostrarMensaje('Guardando apuesta en Google Sheets...', 'success');
+            
+            const guardado = await guardarApuestaEnSheets(nuevaApuesta);
+            
+            if (guardado) {
+                const numerosTexto = jugadorActual.numeros.join(', ');
+                const resumenHTML = `
+                    <p>👤 <span>${jugadorActual.nombre}</span></p>
+                    <p>🔢 DNI termina en <span>${jugadorActual.dni}</span></p>
+                    <p>🎲 Tus números: <span style="font-size:1.3em;">${numerosTexto}</span></p>
+                    <p>🖥️ IP: <span>${jugadorActual.ip}</span></p>
+                `;
+                
+                document.getElementById('resumenApuesta').innerHTML = resumenHTML;
+                document.getElementById('apuestaScreen').classList.add('hidden');
+                document.getElementById('exitoScreen').classList.remove('hidden');
+                
+                if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                mostrarMensaje('✅ ¡Apuesta registrada en Google Sheets!', 'success');
+            } else {
+                mostrarMensaje('❌ Error al guardar en Google Sheets. Intenta nuevamente', 'error');
+            }
+        }
+        
+        // Mostrar mensaje
+        function mostrarMensaje(msg, tipo) {
+            const msgDiv = document.getElementById('floatingMessage');
+            msgDiv.textContent = msg;
+            msgDiv.className = 'message';
+            if (tipo === 'error') {
+                msgDiv.classList.add('error');
+            }
+            msgDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                msgDiv.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Reiniciar
+        function reiniciar() {
+            document.getElementById('nombre').value = '';
+            document.getElementById('dni').value = '';
+            document.getElementById('celular').value = '';
+            
+            jugadorActual = {
+                nombre: '',
+                dni: '',
+                celular: '',
+                numeros: [],
+                idUnico: '',
+                ip: ''
+            };
+            
+            document.getElementById('yaApostoScreen').classList.add('hidden');
+            document.getElementById('exitoScreen').classList.add('hidden');
+            document.getElementById('apuestaScreen').classList.add('hidden');
+            document.getElementById('registroScreen').classList.remove('hidden');
+            
+            if (document.getElementById('numbersGrid')) {
+                actualizarUI();
+            }
+        }
+        
+        console.log('✅ Página lista - Solo Google Sheets, sin almacenamiento local');
+    </script>
+</body>
+</html>
