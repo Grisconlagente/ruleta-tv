@@ -28,32 +28,56 @@
             margin: 0 auto;
         }
 
+        /* Pantallas */
         .screen {
             background: linear-gradient(145deg, #1a2a3a, #0f1a24);
             border-radius: 32px;
             padding: 24px 20px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
             border: 1px solid rgba(201,160,61,0.3);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .hidden {
             display: none;
         }
 
-        h1 {
-            font-size: 1.8em;
+        /* Header */
+        .header {
             text-align: center;
-            color: #c9a03d;
-            margin-bottom: 8px;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #aaa;
             margin-bottom: 24px;
-            font-size: 0.9em;
         }
 
+        .header h1 {
+            font-size: 1.8em;
+            color: #c9a03d;
+            margin-bottom: 4px;
+            letter-spacing: 2px;
+        }
+
+        .header .subtitle {
+            color: #aaa;
+            font-size: 0.85em;
+        }
+
+        /* Badge de tiempo */
+        .time-badge {
+            background: rgba(0,0,0,0.5);
+            border-radius: 40px;
+            padding: 8px 16px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 0.8em;
+            color: #ffd966;
+            border: 1px solid rgba(255,217,102,0.3);
+        }
+
+        /* Inputs */
         .input-group {
             margin-bottom: 20px;
         }
@@ -63,7 +87,8 @@
             color: #c9a03d;
             margin-bottom: 8px;
             font-weight: bold;
-            font-size: 0.9em;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
         }
 
         .input-group input {
@@ -80,26 +105,28 @@
         .input-group input:focus {
             outline: none;
             border-color: #c9a03d;
+            box-shadow: 0 0 0 2px rgba(201,160,61,0.2);
         }
 
         .input-group small {
             display: block;
             color: #888;
             margin-top: 6px;
-            font-size: 0.75em;
+            font-size: 0.7em;
         }
 
+        /* Botón principal */
         .btn-primary {
             width: 100%;
             background: linear-gradient(135deg, #c9a03d, #9b7b2c);
             border: none;
             padding: 16px;
             border-radius: 40px;
-            font-size: 1.2em;
+            font-size: 1.1em;
             font-weight: bold;
             color: #1a2a3a;
             cursor: pointer;
-            transition: transform 0.1s;
+            transition: all 0.2s;
             margin-top: 16px;
         }
 
@@ -113,6 +140,7 @@
             cursor: not-allowed;
         }
 
+        /* Tablero de números */
         .numbers-board {
             background: #0a121c;
             border-radius: 24px;
@@ -123,16 +151,16 @@
         .numbers-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
+            gap: 8px;
         }
 
         .number-btn {
             background: #1a2a3a;
             border: 2px solid #2a3a4a;
-            border-radius: 16px;
-            padding: 16px 8px;
+            border-radius: 12px;
+            padding: 14px 4px;
             text-align: center;
-            font-size: 1.3em;
+            font-size: 1.2em;
             font-weight: bold;
             color: white;
             cursor: pointer;
@@ -147,37 +175,49 @@
             transform: scale(0.95);
         }
 
+        /* Colores de los números */
+        .number-btn[data-color="red"] { background: #c0392b; border-color: #e74c3c; }
+        .number-btn[data-color="black"] { background: #2c3e50; border-color: #34495e; }
+        .number-btn[data-color="green"] { background: #27ae60; border-color: #2ecc71; }
         .number-btn.selected {
             background: linear-gradient(135deg, #c9a03d, #9b7b2c);
             border-color: #ffd966;
             color: #1a1a2e;
             transform: scale(1.02);
+            box-shadow: 0 0 10px rgba(201,160,61,0.5);
         }
 
+        /* Contador de selección */
         .selected-counter {
             background: #0a121c;
             border-radius: 20px;
-            padding: 16px;
+            padding: 14px;
             text-align: center;
             margin: 16px 0;
+        }
+
+        .selected-counter p {
+            color: #aaa;
+            font-size: 0.85em;
+            margin-bottom: 8px;
         }
 
         .selected-numbers {
             display: flex;
             justify-content: center;
-            gap: 16px;
-            margin-top: 12px;
+            gap: 12px;
         }
 
         .selected-badge {
             background: #c9a03d;
             color: #1a1a2e;
             font-weight: bold;
-            font-size: 1.4em;
-            padding: 8px 20px;
+            font-size: 1.3em;
+            padding: 8px 18px;
             border-radius: 40px;
-            min-width: 70px;
+            min-width: 65px;
             text-align: center;
+            transition: all 0.2s;
         }
 
         .selected-badge.empty {
@@ -185,6 +225,17 @@
             color: #888;
         }
 
+        .selected-badge.filled {
+            animation: pop 0.2s ease;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Mensajes flotantes */
         .message {
             position: fixed;
             bottom: 20px;
@@ -192,26 +243,34 @@
             transform: translateX(-50%);
             background: #27ae60;
             color: white;
-            padding: 14px 24px;
+            padding: 12px 20px;
             border-radius: 40px;
             font-weight: bold;
             display: none;
             z-index: 1000;
             white-space: nowrap;
             box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            font-size: 0.9em;
         }
 
         .message.error {
             background: #e74c3c;
         }
 
+        /* Pantalla de éxito */
         .success-screen {
             text-align: center;
         }
 
         .success-icon {
-            font-size: 4em;
-            margin: 20px 0;
+            font-size: 3.5em;
+            margin: 15px 0;
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
         .apuesta-info {
@@ -225,6 +284,7 @@
         .apuesta-info p {
             margin: 10px 0;
             color: #ddd;
+            font-size: 0.95em;
         }
 
         .apuesta-info span {
@@ -232,31 +292,22 @@
             font-weight: bold;
         }
 
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 0.7em;
+            color: #666;
+        }
+
+        /* Responsive */
         @media (max-width: 480px) {
-            body {
-                padding: 12px;
-            }
-            .screen {
-                padding: 20px 16px;
-            }
-            h1 {
-                font-size: 1.5em;
-            }
-            .number-btn {
-                font-size: 1.1em;
-                padding: 12px 4px;
-            }
-            .selected-badge {
-                font-size: 1.2em;
-                padding: 6px 16px;
-                min-width: 60px;
-            }
-            .message {
-                white-space: normal;
-                text-align: center;
-                max-width: 90%;
-                font-size: 0.9em;
-            }
+            body { padding: 12px; }
+            .screen { padding: 20px 16px; }
+            .header h1 { font-size: 1.4em; }
+            .number-btn { font-size: 1em; padding: 10px 4px; }
+            .selected-badge { font-size: 1.1em; padding: 6px 14px; min-width: 55px; }
+            .message { white-space: normal; text-align: center; max-width: 90%; font-size: 0.85em; }
         }
     </style>
 </head>
@@ -265,11 +316,17 @@
         
         <!-- PANTALLA 1: REGISTRO -->
         <div id="registroScreen" class="screen">
-            <h1>🎰 RULETA DEL PROGRAMA 🎰</h1>
-            <div class="subtitle">¡Elige 3 números y gana!</div>
+            <div class="header">
+                <h1>🎰 RULETA TV</h1>
+                <div class="subtitle">¡Elige 3 números y gana!</div>
+            </div>
+            
+            <div class="time-badge">
+                ⏰ Apuestas abiertas hasta fin del programa
+            </div>
             
             <div class="input-group">
-                <label>👤 TU NOMBRE (como figura en tu DNI)</label>
+                <label>👤 TU NOMBRE</label>
                 <input type="text" id="nombre" placeholder="Ej: Juan" maxlength="30" autocomplete="off">
                 <small>*Solo el primer nombre</small>
             </div>
@@ -277,25 +334,28 @@
             <div class="input-group">
                 <label>🔢 ÚLTIMOS 3 DÍGITOS DE TU DNI</label>
                 <input type="text" id="dni" placeholder="Ej: 123" maxlength="3" inputmode="numeric">
-                <small>*Tu nombre + estos 3 dígitos aseguran una sola apuesta por persona</small>
+                <small>*Para asegurar una sola apuesta por persona</small>
             </div>
             
             <div class="input-group">
-                <label>📱 Celular (opcional)</label>
+                <label>📱 CELULAR (opcional)</label>
                 <input type="tel" id="celular" placeholder="Ej: 11 1234-5678" autocomplete="off">
                 <small>*Solo para contactarte si ganas</small>
             </div>
             
             <button class="btn-primary" onclick="registrarJugador()">🎲 COMENZAR 🎲</button>
+            <div class="footer">Una apuesta por persona • Sin costo</div>
         </div>
         
         <!-- PANTALLA 2: SELECCIONAR 3 NÚMEROS -->
         <div id="apuestaScreen" class="screen hidden">
-            <h1>🎯 ELIGE TUS 3 NÚMEROS</h1>
-            <div class="subtitle" id="bienvenidaTexto"></div>
+            <div class="header">
+                <h1>🎯 ELIGE 3 NÚMEROS</h1>
+                <div class="subtitle" id="bienvenidaTexto"></div>
+            </div>
             
             <div class="selected-counter">
-                <div>📌 Números seleccionados:</div>
+                <p>📌 Tus números seleccionados</p>
                 <div class="selected-numbers" id="selectedNumbersDisplay">
                     <div class="selected-badge empty">_</div>
                     <div class="selected-badge empty">_</div>
@@ -307,14 +367,16 @@
                 <div class="numbers-grid" id="numbersGrid"></div>
             </div>
             
-            <button class="btn-primary" id="confirmarBtn" onclick="confirmarApuesta()" disabled>✅ CONFIRMAR APUESTA ✅</button>
+            <button class="btn-primary" id="confirmarBtn" onclick="confirmarApuesta()" disabled>✅ CONFIRMAR APUESTA</button>
         </div>
         
         <!-- PANTALLA 3: YA APOSTÓ -->
         <div id="yaApostoScreen" class="screen hidden">
-            <h1>⚠️ YA APOSTASTE ⚠️</h1>
-            <div class="subtitle" id="yaApostoMensaje"></div>
-            <div style="text-align: center; font-size: 3em; margin: 30px 0;">🎰</div>
+            <div class="header">
+                <h1>⚠️ YA APOSTASTE</h1>
+                <div class="subtitle" id="yaApostoMensaje"></div>
+            </div>
+            <div style="text-align: center; font-size: 3em; margin: 20px 0;">🎰</div>
             <button class="btn-primary" onclick="reiniciar()">VOLVER AL INICIO</button>
         </div>
         
@@ -344,11 +406,17 @@
             appId: "1:239258986908:web:b633769f9576f2a9a94059"
         };
         
-        // Inicializar Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         
-        // Variables del jugador
+        // Colores de números de la ruleta
+        const coloresNumeros = {
+            0: 'green', 1: 'red', 2: 'black', 3: 'red', 4: 'black', 5: 'red', 6: 'black', 7: 'red', 8: 'black', 9: 'red', 10: 'black',
+            11: 'black', 12: 'red', 13: 'black', 14: 'red', 15: 'black', 16: 'red', 17: 'black', 18: 'red', 19: 'red',
+            20: 'black', 21: 'red', 22: 'black', 23: 'red', 24: 'black', 25: 'red', 26: 'black', 27: 'red', 28: 'black',
+            29: 'black', 30: 'red', 31: 'black', 32: 'red', 33: 'black', 34: 'red', 35: 'black', 36: 'red'
+        };
+        
         let jugadorActual = {
             nombre: '',
             dni: '',
@@ -358,7 +426,6 @@
             ip: ''
         };
         
-        // Función para obtener IP del usuario
         async function obtenerIP() {
             try {
                 const res = await fetch('https://api.ipify.org?format=json');
@@ -369,7 +436,6 @@
             }
         }
         
-        // Función para crear ID único
         function crearIdUnico(nombre, dni) {
             let primerNombre = nombre.trim().split(' ')[0];
             primerNombre = primerNombre.toLowerCase()
@@ -377,7 +443,6 @@
             return `${primerNombre}_${dni}`;
         }
         
-        // Verificar en Firebase si ya existe el DNI
         async function verificarDniEnFirebase(dni) {
             try {
                 const querySnapshot = await db.collection('apuestas')
@@ -385,12 +450,11 @@
                     .get();
                 return !querySnapshot.empty;
             } catch(error) {
-                console.error('Error al verificar DNI:', error);
+                console.error('Error:', error);
                 return false;
             }
         }
         
-        // Guardar apuesta en Firebase
         async function guardarApuestaEnFirebase(apuesta) {
             try {
                 await db.collection('apuestas').add({
@@ -404,13 +468,12 @@
                 });
                 return true;
             } catch(error) {
-                console.error('Error al guardar:', error);
+                console.error('Error:', error);
                 return false;
             }
         }
         
-        // Verificar si puede apostar (solo verifica DNI)
-        async function verificarPuedeApostar(nombre, dni, ip) {
+        async function verificarPuedeApostar(dni) {
             const dniYaAposto = await verificarDniEnFirebase(dni);
             if (dniYaAposto) {
                 return { permitido: false, razon: 'Ya realizaste tu apuesta esta semana' };
@@ -418,7 +481,6 @@
             return { permitido: true, razon: '' };
         }
         
-        // Generar tablero
         function generarTablero() {
             const grid = document.getElementById('numbersGrid');
             grid.innerHTML = '';
@@ -426,6 +488,7 @@
             for (let i = 0; i <= 36; i++) {
                 const btn = document.createElement('div');
                 btn.className = 'number-btn';
+                btn.setAttribute('data-color', coloresNumeros[i]);
                 btn.textContent = i;
                 btn.onclick = (function(num) {
                     return function() { toggleNumero(num); };
@@ -434,7 +497,6 @@
             }
         }
         
-        // Alternar selección
         function toggleNumero(num) {
             const index = jugadorActual.numeros.indexOf(num);
             
@@ -447,6 +509,7 @@
                 jugadorActual.numeros.push(num);
                 mostrarMensaje(`✅ Número ${num} agregado`, 'success');
                 if (navigator.vibrate) navigator.vibrate(50);
+                animarBadge(jugadorActual.numeros.length - 1);
             } else {
                 jugadorActual.numeros.splice(index, 1);
                 mostrarMensaje(`❌ Número ${num} removido`, 'success');
@@ -456,7 +519,16 @@
             actualizarUI();
         }
         
-        // Actualizar UI
+        function animarBadge(posicion) {
+            const badges = document.querySelectorAll('#selectedNumbersDisplay .selected-badge');
+            if (badges[posicion]) {
+                badges[posicion].classList.add('filled');
+                setTimeout(() => {
+                    badges[posicion].classList.remove('filled');
+                }, 200);
+            }
+        }
+        
         function actualizarUI() {
             const badges = document.querySelectorAll('#selectedNumbersDisplay .selected-badge');
             for (let i = 0; i < 3; i++) {
@@ -483,7 +555,6 @@
             confirmarBtn.disabled = jugadorActual.numeros.length !== 3;
         }
         
-        // Registrar jugador
         async function registrarJugador() {
             const nombre = document.getElementById('nombre').value.trim();
             const dni = document.getElementById('dni').value.trim();
@@ -508,8 +579,7 @@
             mostrarMensaje('Verificando...', 'success');
             
             const ip = await obtenerIP();
-            
-            const verificacion = await verificarPuedeApostar(nombre, dni, ip);
+            const verificacion = await verificarPuedeApostar(dni);
             
             if (!verificacion.permitido) {
                 document.getElementById('registroScreen').classList.add('hidden');
@@ -529,7 +599,7 @@
             
             document.getElementById('registroScreen').classList.add('hidden');
             document.getElementById('apuestaScreen').classList.remove('hidden');
-            document.getElementById('bienvenidaTexto').innerHTML = `¡Hola ${primerNombre}! Elige tus 3 números`;
+            document.getElementById('bienvenidaTexto').innerHTML = `¡Hola ${primerNombre}!`;
             
             if (document.querySelectorAll('.number-btn').length === 0) {
                 generarTablero();
@@ -539,24 +609,21 @@
             }
         }
         
-        // Confirmar apuesta CON PROTECCIÓN ANTIFRAUDE
         async function confirmarApuesta() {
             if (jugadorActual.numeros.length !== 3) {
                 mostrarMensaje('Elige exactamente 3 números', 'error');
                 return;
             }
             
-            // =====================================================
-            // PROTECCIÓN 1: Límite de tiempo entre apuestas (60 segundos)
-            // =====================================================
+            // Protección: 60 segundos entre apuestas
             const ULTIMA_APUESTA_KEY = 'ultimaApuesta';
             const ultimaApuesta = localStorage.getItem(ULTIMA_APUESTA_KEY);
             
             if (ultimaApuesta) {
                 const tiempoTranscurrido = Date.now() - parseInt(ultimaApuesta);
-                if (tiempoTranscurrido < 60000) { // 60 segundos
+                if (tiempoTranscurrido < 60000) {
                     const segundosRestantes = Math.ceil((60000 - tiempoTranscurrido) / 1000);
-                    mostrarMensaje(`⚠️ Debes esperar ${segundosRestantes} segundos entre apuestas`, 'error');
+                    mostrarMensaje(`⚠️ Espera ${segundosRestantes} segundos`, 'error');
                     if (navigator.vibrate) navigator.vibrate(200);
                     return;
                 }
@@ -578,15 +645,13 @@
             const guardado = await guardarApuestaEnFirebase(nuevaApuesta);
             
             if (guardado) {
-                // Guardar la hora de esta apuesta
                 localStorage.setItem(ULTIMA_APUESTA_KEY, Date.now().toString());
                 
                 const numerosTexto = jugadorActual.numeros.join(', ');
                 const resumenHTML = `
                     <p>👤 <span>${jugadorActual.nombre}</span></p>
                     <p>🔢 DNI termina en <span>${jugadorActual.dni}</span></p>
-                    <p>🎲 Tus números: <span style="font-size:1.3em;">${numerosTexto}</span></p>
-                    <p>🖥️ IP: <span>${jugadorActual.ip}</span></p>
+                    <p>🎲 Tus números: <span style="font-size:1.2em;">${numerosTexto}</span></p>
                 `;
                 
                 document.getElementById('resumenApuesta').innerHTML = resumenHTML;
@@ -600,22 +665,15 @@
             }
         }
         
-        // Mostrar mensaje
         function mostrarMensaje(msg, tipo) {
             const msgDiv = document.getElementById('floatingMessage');
             msgDiv.textContent = msg;
             msgDiv.className = 'message';
-            if (tipo === 'error') {
-                msgDiv.classList.add('error');
-            }
+            if (tipo === 'error') msgDiv.classList.add('error');
             msgDiv.style.display = 'block';
-            
-            setTimeout(() => {
-                msgDiv.style.display = 'none';
-            }, 3000);
+            setTimeout(() => { msgDiv.style.display = 'none'; }, 2500);
         }
         
-        // Reiniciar
         function reiniciar() {
             document.getElementById('nombre').value = '';
             document.getElementById('dni').value = '';
@@ -634,13 +692,10 @@
             document.getElementById('exitoScreen').classList.add('hidden');
             document.getElementById('apuestaScreen').classList.add('hidden');
             document.getElementById('registroScreen').classList.remove('hidden');
-            
-            if (document.getElementById('numbersGrid')) {
-                actualizarUI();
-            }
+            if (document.getElementById('numbersGrid')) actualizarUI();
         }
         
-        console.log('✅ Firebase conectado - Protección antifraude activa (60 segundos entre apuestas)');
+        console.log('✅ Ruleta TV - Frontend mejorado');
     </script>
 </body>
 </html>
