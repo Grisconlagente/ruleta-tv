@@ -352,7 +352,7 @@
             </div>
             
             <button class="btn-primary" onclick="registrarJugador()"> COMENZAR </button>
-            <div class="footer">Una apuesta por persona • Sin costo</div>
+            <div class="footer">Una apuesta por persona </div>
         </div>
         
         <!-- PANTALLA 2: SELECCIONAR 3 NÚMEROS -->
@@ -481,22 +481,74 @@
             }
         }
         
-        async function verificarPuedeApostar(nombre, dni) {
+        async function verificarPuedeApostar(nombre, dni, ip) {
             const idUnico = crearIdUnico(nombre, dni);
             
             try {
-                const querySnapshot = await db.collection('apuestas')
+                // =====================================================
+                // REGLA 1: Mismo nombre + mismo DNI (BLOQUEADO SIEMPRE)
+                // Independientemente de la IP
+                // =====================================================
+                const mismaCombinacion = await db.collection('apuestas')
                     .where('idUnico', '==', idUnico)
                     .get();
                 
-                if (!querySnapshot.empty) {
+                if (mismaCombinacion.size > 0) {
+                    console.log('❌ Combinación nombre+DNI ya utilizada:', idUnico);
                     return { permitido: false, razon: 'Ya realizaste tu apuesta esta semana' };
                 }
                 
+                // =====================================================
+                // REGLA 2: Mismo DNI + diferente nombre
+                // =====================================================
+                const mismoDni = await db.collection('apuestas')
+                    .where('dni', '==', dni)
+                    .get();
+                
+                if (mismoDni.size > 0) {
+                    // Verificar si alguna apuesta tiene diferente nombre
+                    let diferenteNombre = false;
+                    let ipsRegistradas = [];
+                    
+                    mismoDni.forEach(doc => {
+                        const data = doc.data();
+                        ipsRegistradas.push(data.ip);
+                        if (data.idUnico !== idUnico) {
+                            diferenteNombre = true;
+                        }
+                    });
+                    
+                    if (diferenteNombre) {
+                        // Verificar si la IP actual ya está registrada con este DNI
+                        if (ipsRegistradas.includes(ip) && ip !== 'desconocida') {
+                            console.log('❌ Fraude: mismo DNI, diferente nombre, misma IP');
+                            return { permitido: false, razon: 'Este DNI ya fue utilizado desde este dispositivo con otro nombre' };
+                        } else {
+                            console.log('✅ Permitido: mismo DNI, diferente nombre, IP diferente');
+                        }
+                    }
+                }
+                
+                // =====================================================
+                // REGLA 3: Límite de 3 apuestas por IP
+                // =====================================================
+                if (ip !== 'desconocida') {
+                    const mismaIp = await db.collection('apuestas')
+                        .where('ip', '==', ip)
+                        .get();
+                    
+                    if (mismaIp.size >= 3) {
+                        console.log('❌ Límite de IP alcanzado:', ip);
+                        return { permitido: false, razon: 'Límite de 3 apuestas por dispositivo' };
+                    }
+                }
+                
+                console.log('✅ Verificación aprobada');
                 return { permitido: true, razon: '' };
+                
             } catch(error) {
-                console.error('Error:', error);
-                return { permitido: false, razon: 'Error de verificación' };
+                console.error('Error en verificación:', error);
+                return { permitido: true, razon: '' };
             }
         }
         
