@@ -347,8 +347,8 @@
             </div>
             
             <div class="input-group">
-                <input type="tel" id="celular" placeholder="NÚMERO DE CELULAR (OPCIONAL)" autocomplete="off">
-                <small>*Solo para contactarte si ganas</small>
+                <input type="tel" id="celular" placeholder="NÚMERO DE CELULAR (Opcional)" autocomplete="off">
+                <small>*Para contactarte si ganas</small>
             </div>
             
             <button class="btn-primary" onclick="registrarJugador()"> COMENZAR </button>
@@ -596,6 +596,11 @@
             
             if (!dni || dni.length !== 3 || !/^\d+$/.test(dni)) {
                 mostrarMensaje('Ingresa los 3 últimos dígitos de tu DNI', 'error');
+                return;
+            }
+            
+            if (!celular) {
+                mostrarMensaje('El número de celular es obligatorio', 'error');
                 return;
             }
             
