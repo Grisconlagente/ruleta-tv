@@ -692,8 +692,7 @@
             const guardado = await guardarApuestaEnFirebase(nuevaApuesta);
             
             if (guardado) {
-                localStorage.setItem(ULTIMA_APUESTA_KEY, Date.now().toString());
-                
+               
                 const numerosTexto = jugadorActual.numeros.join(', ');
                 const resumenHTML = `
                     <p>👤 <span>${jugadorActual.nombre}</span></p>
