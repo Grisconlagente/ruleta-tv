@@ -623,7 +623,7 @@
             mostrarMensaje('Verificando...', 'success');
             
             const ip = await obtenerIP();
-            const verificacion = await verificarPuedeApostar(nombre, dni);
+            const verificacion = await verificarPuedeApostar(nombre, dni, ip);
             
             if (!verificacion.permitido) {
                 document.getElementById('registroScreen').classList.add('hidden');
