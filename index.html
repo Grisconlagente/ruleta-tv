@@ -481,18 +481,34 @@
             }
         }
         
-        async function verificarPuedeApostar(nombre, dni) {
+        async function verificarPuedeApostar(nombre, dni, ip) {
             const idUnico = crearIdUnico(nombre, dni);
             
             try {
-                // Buscar si ya existe esta combinación de nombre + dni
-                const existe = await db.collection('apuestas')
+                // =====================================================
+                // REGLA 1: Mismo nombre + mismo DNI (BLOQUEADO)
+                // =====================================================
+                const mismaCombinacion = await db.collection('apuestas')
                     .where('idUnico', '==', idUnico)
                     .get();
                 
-                if (existe.size > 0) {
+                if (mismaCombinacion.size > 0) {
                     console.log('❌ Combinación ya utilizada:', idUnico);
                     return { permitido: false, razon: 'Ya estás participando' };
+                }
+                
+                // =====================================================
+                // REGLA 2: Misma IP (BLOQUEADO)
+                // =====================================================
+                if (ip !== 'desconocida') {
+                    const mismaIp = await db.collection('apuestas')
+                        .where('ip', '==', ip)
+                        .get();
+                    
+                    if (mismaIp.size > 0) {
+                        console.log('❌ IP ya utilizada:', ip);
+                        return { permitido: false, razon: 'Ya se realizó una apuesta desde este dispositivo' };
+                    }
                 }
                 
                 console.log('✅ Verificación aprobada:', idUnico);
