@@ -381,7 +381,7 @@
         <!-- PANTALLA 3: YA APOSTÓ -->
         <div id="yaApostoScreen" class="screen hidden">
             <div class="header">
-                <h1>⚠️ YA APOSTASTE</h1>
+                <h1> YA APOSTASTE</h1>
                 <div class="subtitle" id="yaApostoMensaje"></div>
             </div>
             <div style="text-align: center; font-size: 3em; margin: 20px 0;">🎰</div>
@@ -393,7 +393,7 @@
             <div class="success-icon">✅</div>
             <h1>¡APUESTA REGISTRADA!</h1>
             <div class="apuesta-info" id="resumenApuesta"></div>
-            <div class="subtitle">📺 Sintoniza el programa para ver el resultado</div>
+            <div class="subtitle"> Sintoniza el programa para ver el resultado</div>
             <button class="btn-primary" onclick="reiniciar()">VOLVER AL INICIO</button>
         </div>
         
@@ -603,7 +603,7 @@
             if (!verificacion.permitido) {
                 document.getElementById('registroScreen').classList.add('hidden');
                 document.getElementById('yaApostoScreen').classList.remove('hidden');
-                document.getElementById('yaApostoMensaje').innerHTML = `${nombre}, ${verificacion.razon}<br><br>📺 Gracias por participar.`;
+                document.getElementById('yaApostoMensaje').innerHTML = `${nombre}, ${verificacion.razon}<br><br> Gracias por participar.`;
                 return;
             }
             
