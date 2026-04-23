@@ -481,36 +481,28 @@
             }
         }
         
-        async function verificarPuedeApostar(nombre, dni, ip) {
+        async function verificarPuedeApostar(nombre, dni, celular) {
             const idUnico = crearIdUnico(nombre, dni);
             
             try {
-                console.log('🔍 Verificando:', idUnico, 'IP:', ip);
-                
-                // REGLA 1: Buscar por idUnico
-                const queryIdUnico = await db.collection('apuestas')
+                // REGLA 1: Mismo nombre + mismo DNI
+                const mismaCombinacion = await db.collection('apuestas')
                     .where('idUnico', '==', idUnico)
                     .get();
                 
-                console.log('📊 Documentos con mismo idUnico:', queryIdUnico.size);
-                
-                if (queryIdUnico.size > 0) {
+                if (mismaCombinacion.size > 0) {
                     console.log('❌ Bloqueado: misma combinación nombre+DNI');
                     return { permitido: false, razon: 'Ya estás participando' };
                 }
                 
-                // REGLA 2: Buscar por IP
-                if (ip && ip !== 'desconocida') {
-                    const queryIp = await db.collection('apuestas')
-                        .where('ip', '==', ip)
-                        .get();
-                    
-                    console.log('📊 Documentos con misma IP:', queryIp.size);
-                    
-                    if (queryIp.size > 0) {
-                        console.log('❌ Bloqueado: misma IP');
-                        return { permitido: false, razon: 'Ya se realizó una apuesta desde este dispositivo' };
-                    }
+                // REGLA 2: Mismo número de celular
+                const mismoCelular = await db.collection('apuestas')
+                    .where('celular', '==', celular)
+                    .get();
+                
+                if (mismoCelular.size > 0) {
+                    console.log('❌ Bloqueado: mismo celular');
+                    return { permitido: false, razon: 'Este número de celular ya realizó una apuesta' };
                 }
                 
                 console.log('✅ Verificación aprobada');
@@ -518,8 +510,7 @@
                 
             } catch(error) {
                 console.error('❌ Error en verificación:', error);
-                // En caso de error, permitir apostar (para no bloquear a todos)
-                return { permitido: true, razon: '' };
+                return { permitido: false, razon: 'Error del sistema. Intenta más tarde' };
             }
         }
         
@@ -626,7 +617,7 @@
             mostrarMensaje('Verificando...', 'success');
             
             const ip = await obtenerIP();
-            const verificacion = await verificarPuedeApostar(nombre, dni, ip);
+            const verificacion = await verificarPuedeApostar(nombre, dni, celular);
             
             if (!verificacion.permitido) {
                 document.getElementById('registroScreen').classList.add('hidden');
