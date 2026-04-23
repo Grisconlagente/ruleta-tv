@@ -686,9 +686,9 @@
                
                 const numerosTexto = jugadorActual.numeros.join(', ');
                 const resumenHTML = `
-                    <p>👤 <span>${jugadorActual.nombre}</span></p>
-                    <p>🔢 DNI termina en <span>${jugadorActual.dni}</span></p>
-                    <p>🎲 Tus números: <span style="font-size:1.2em;">${numerosTexto}</span></p>
+                    <p> <span>${jugadorActual.nombre}</span></p>
+                    <p> Tu DNI termina en: <span>${jugadorActual.dni}</span></p>
+                    <p> Tus números: <span style="font-size:1.2em;">${numerosTexto}</span></p>
                 `;
                 
                 document.getElementById('resumenApuesta').innerHTML = resumenHTML;
