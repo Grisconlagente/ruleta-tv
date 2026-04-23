@@ -482,45 +482,9 @@
         }
         
         async function verificarPuedeApostar(nombre, dni, ip) {
-            const idUnico = crearIdUnico(nombre, dni);
-            
-            try {
-                console.log('🔍 Verificando:', idUnico, 'IP:', ip);
-                
-                // REGLA 1: Mismo nombre + mismo DNI
-                const mismaCombinacion = await db.collection('apuestas')
-                    .where('idUnico', '==', idUnico)
-                    .get();
-                
-                console.log('📊 Apuestas con misma combinación:', mismaCombinacion.size);
-                
-                if (mismaCombinacion.size > 0) {
-                    console.log('❌ Bloqueado: misma combinación');
-                    return { permitido: false, razon: 'Ya estás participando' };
-                }
-                
-                // REGLA 2: Misma IP
-                if (ip !== 'desconocida') {
-                    const mismaIp = await db.collection('apuestas')
-                        .where('ip', '==', ip)
-                        .get();
-                    
-                    console.log('📊 Apuestas con misma IP:', mismaIp.size);
-                    
-                    if (mismaIp.size > 0) {
-                        console.log('❌ Bloqueado: misma IP');
-                        return { permitido: false, razon: 'Ya se realizó una apuesta desde este dispositivo' };
-                    }
-                }
-                
-                console.log('✅ Verificación aprobada');
-                return { permitido: true, razon: '' };
-                
-            } catch(error) {
-                console.error('❌ Error grave en verificación:', error);
-                // En caso de error, NO permitir apostar para evitar fraudes
-                return { permitido: false, razon: 'Error del sistema. Intenta más tarde' };
-            }
+            // Sin restricciones: todos pueden apostar siempre
+            console.log('✅ Sin restricciones - Todos pueden apostar');
+            return { permitido: true, razon: '' };
         }
         
         function generarTablero() {
