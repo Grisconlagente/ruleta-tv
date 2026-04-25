@@ -16,7 +16,8 @@
             box-sizing: border-box;
         }
 
-     body {
+        /* Fondo para toda la página */
+        body {
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
             background-image: url('fondo_casino.jpg');
             background-size: cover;
@@ -26,12 +27,85 @@
             padding: 16px;
         }
 
+        /* Pantalla de bienvenida */
+        .welcome-screen {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-image: url('fondo_casino.jpg');
+			background-size: cover;
+			background-position: center;
+			z-index: 1000;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			/* Eliminamos el rgba(0,0,0,0.85) */
+		}
+
+
+        .welcome-container {
+            text-align: center;
+            padding: 20px;
+            animation: fadeInUp 0.8s ease;
+            position: relative;
+        }
+
+        .logo-bienvenida {
+            max-width: 64%;
+            height: auto;
+            display: block;
+            margin: 0 auto 5px auto;
+            animation: pulse 2s infinite;
+        }
+
+        .btn-jugar {
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            border: none;
+            padding: 14px 40px;
+            border-radius: 60px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #1a2a3a;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            letter-spacing: 2px;
+            position: relative;
+            top: -40px;
+        }
+
+        .btn-jugar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-jugar:active {
+            transform: scale(0.98);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        /* Pantalla del juego (oculta inicialmente) */
+        .game-screen {
+            display: none;
+        }
+
         .container {
             max-width: 550px;
             margin: 0 auto;
         }
 
-        /* Pantallas */
         .screen {
             background-color: #1a5c3e;
             background-image: url('fondo_formulario.jpg');
@@ -50,35 +124,9 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .hidden {
-            display: none;
-        }
-
-        /* Header */
-        .header {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
-        .header h1 {
-            font-size: 1.8em;
-            color: #c9a03d;
-            margin-bottom: 4px;
-            letter-spacing: 2px;
-        }
-        .logo {
-            max-width: 80%;
-            height: auto;
-            display: block;
-            margin: 0 auto 10px auto;
-        }
-
-        .header .subtitle {
-            color: #aaa;
-            font-size: 0.85em;
-        }
-
-        /* Badge de tiempo */
+        .hidden { display: none; }
+        .header { text-align: center; margin-bottom: 24px; }
+        .logo { max-width: 80%; height: auto; display: block; margin: 0 auto 10px auto; }
         .time-badge {
             background: rgba(0,0,0,0.5);
             border-radius: 40px;
@@ -89,20 +137,7 @@
             color: #ffd966;
             border: 1px solid rgba(255,217,102,0.3);
         }
-
-        /* Inputs */
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .input-group label {
-            display: block;
-            color: #000000;
-            margin-bottom: 8px;
-            font-weight: bold;
-            font-size: 0.85em;
-            letter-spacing: 0.5px;
-        }
+        .input-group { margin-bottom: 20px; }
         .input-group input {
             width: 100%;
             padding: 14px 16px;
@@ -113,23 +148,35 @@
             color: #1a2a3a;
             transition: all 0.2s;
         }
-
-        .input-group input:focus {
-            outline: none;
-            border-color: #c9a03d;
-            box-shadow: 0 0 0 2px rgba(201,160,61,0.2);
+        .input-group select {
+            width: 100%;
+            padding: 14px 16px;
+            background: #ffffff;
+            border: 2px solid #c9a03d;
+            border-radius: 16px;
+            font-size: 1em;
+            transition: all 0.2s;
+            cursor: pointer;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+            background-repeat: no-repeat;
+            background-position: right 16px center;
         }
-
+        
+        /* Color del select de código de área */
+        #codigoArea { color: #888; }
+        #codigoArea:valid { color: #1a2a3a; }
+        #codigoArea option { color: #1a2a3a; background-color: #ffffff; }
+        #codigoArea option[value=""] { color: #888; }
+        
         .input-group small {
-        display: block;
-        color: #000000;
-        text-align: center;
-        margin-top: 6px;
-        font-size: 0.7em;
-        width: 100%;
-        text-align: center !important;
-    }
-        /* Botón principal */
+            display: block;
+            color: #000000;
+            text-align: center;
+            margin-top: 6px;
+            font-size: 0.7em;
+            width: 100%;
+        }
         .btn-primary {
             width: 100%;
             background: linear-gradient(135deg, #ffd700, #ffaa00);
@@ -143,31 +190,10 @@
             transition: all 0.2s;
             margin-top: 16px;
         }
-
-        .btn-primary:active {
-            transform: scale(0.97);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.5;
-            transform: none;
-            cursor: not-allowed;
-        }
-
-        /* Tablero de números */
-        .numbers-board {
-            background: #0a121c;
-            border-radius: 24px;
-            padding: 16px;
-            margin: 20px 0;
-        }
-
-        .numbers-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-        }
-
+        .btn-primary:active { transform: scale(0.97); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .numbers-board { background: #0a121c; border-radius: 24px; padding: 16px; margin: 20px 0; }
+        .numbers-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
         .number-btn {
             background: #1a2a3a;
             border: 2px solid #2a3a4a;
@@ -184,12 +210,7 @@
             align-items: center;
             justify-content: center;
         }
-
-        .number-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* Colores de los números */
+        .number-btn:active { transform: scale(0.95); }
         .number-btn[data-color="red"] { background: #c0392b; border-color: #e74c3c; }
         .number-btn[data-color="black"] { background: #2c3e50; border-color: #34495e; }
         .number-btn[data-color="green"] { background: #27ae60; border-color: #2ecc71; }
@@ -200,28 +221,9 @@
             transform: scale(1.02);
             box-shadow: 0 0 10px rgba(201,160,61,0.5);
         }
-
-        /* Contador de selección */
-        .selected-counter {
-            background: #0a121c;
-            border-radius: 20px;
-            padding: 14px;
-            text-align: center;
-            margin: 16px 0;
-        }
-
-        .selected-counter p {
-            color: #aaa;
-            font-size: 0.85em;
-            margin-bottom: 8px;
-        }
-
-        .selected-numbers {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-        }
-
+        .selected-counter { background: #0a121c; border-radius: 20px; padding: 14px; text-align: center; margin: 16px 0; }
+        .selected-counter p { color: #aaa; font-size: 0.85em; margin-bottom: 8px; }
+        .selected-numbers { display: flex; justify-content: center; gap: 12px; }
         .selected-badge {
             background: #c9a03d;
             color: #1a1a2e;
@@ -233,23 +235,9 @@
             text-align: center;
             transition: all 0.2s;
         }
-
-        .selected-badge.empty {
-            background: #2a3a4a;
-            color: #888;
-        }
-
-        .selected-badge.filled {
-            animation: pop 0.2s ease;
-        }
-
-        @keyframes pop {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        /* Mensajes flotantes */
+        .selected-badge.empty { background: #2a3a4a; color: #888; }
+        .selected-badge.filled { animation: pop 0.2s ease; }
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
         .message {
             position: fixed;
             bottom: 20px;
@@ -261,144 +249,140 @@
             border-radius: 40px;
             font-weight: bold;
             display: none;
-            z-index: 1000;
+            z-index: 1001;
             white-space: nowrap;
             box-shadow: 0 5px 20px rgba(0,0,0,0.3);
             font-size: 0.9em;
         }
-
-        .message.error {
-            background: #e74c3c;
-        }
-
-        /* Pantalla de éxito */
-        .success-screen {
-            text-align: center;
-        }
-
-        .success-icon {
-            font-size: 3.5em;
-            margin: 15px 0;
-            animation: bounce 0.5s ease;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .apuesta-info {
-            background: #0a121c;
-            border-radius: 20px;
-            padding: 16px;
-            margin: 20px 0;
-            text-align: left;
-        }
-
-        .apuesta-info p {
-            margin: 10px 0;
-            color: #ddd;
-            font-size: 0.95em;
-        }
-
-        .apuesta-info span {
-            color: #c9a03d;
-            font-weight: bold;
-        }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            margin-top: 16px;
-            font-size: 0.7em;
-            color: #666;
-        }
-
-        /* Responsive */
+        .message.error { background: #e74c3c; }
+        .success-screen { text-align: center; }
+        .success-icon { font-size: 3.5em; margin: 15px 0; animation: bounce 0.5s ease; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .apuesta-info { background: #0a121c; border-radius: 20px; padding: 16px; margin: 20px 0; text-align: left; }
+        .apuesta-info p { margin: 10px 0; color: #ddd; font-size: 0.95em; }
+        .apuesta-info span { color: #c9a03d; font-weight: bold; }
+        .footer { text-align: center; margin-top: 16px; font-size: 0.7em; color: #000000; }
         @media (max-width: 480px) {
             body { padding: 12px; }
             .screen { padding: 20px 16px; }
-            .header h1 { font-size: 1.4em; }
             .number-btn { font-size: 1em; padding: 10px 4px; }
             .selected-badge { font-size: 1.1em; padding: 6px 14px; min-width: 55px; }
             .message { white-space: normal; text-align: center; max-width: 90%; font-size: 0.85em; }
+            .btn-jugar { font-size: 1.2em; padding: 12px 30px; top: -30px; }
+            .logo-bienvenida { max-width: 70%; }
+        }
+        @media (max-width: 480px) {
+            .btn-jugar { font-size: 1.2em; padding: 12px 30px; top: -30px; }
+            .logo-bienvenida { max-width: 70%; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        
-        <!-- PANTALLA 1: REGISTRO -->
-        <div id="registroScreen" class="screen">
-            <div class="header">
-                <img src="logo_tv.png" alt="Ruleta TV" class="logo">
-            </div>
-            
-            <div class="time-badge">
-                 JUGA GRATIS!!! SOLO PARA MAYORES DE 18 AÑOS
-            </div>
-            
-            <div class="input-group">
-                <input type="text" id="nombre" placeholder="NOMBRE (Primer nombre del DNI)" maxlength="30" autocomplete="off">
-                <small>*Solo el primer nombre</small>
-            </div>
-            
-            <div class="input-group">
-                <input type="text" id="dni" placeholder="ULTIMAS 3 CIFRAS DEL DNI" maxlength="3" inputmode="numeric">
-                <small>*Para asegurar una sola apuesta por persona</small>
-            </div>
-            
-            <div class="input-group">
-                <input type="tel" id="celular" placeholder="NÚMERO DE CELULAR" autocomplete="off">
-                <small>*Para contactarte si ganas</small>
-            </div>
-            
-            <button class="btn-primary" onclick="registrarJugador()"> COMENZAR </button>
-            <div class="footer">Una apuesta por persona </div>
+
+    <!-- AUDIO DE FONDO -->
+    <audio id="musicaFondo" loop>
+        <source src="audio.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+
+    <!-- PANTALLA DE BIENVENIDA -->
+    <div id="welcomeScreen" class="welcome-screen">
+        <div class="welcome-container">
+            <img src="logo_tv.png" alt="Ruleta TV" class="logo-bienvenida">
+            <button class="btn-jugar" onclick="iniciarJuego()">JUGAR</button>
         </div>
-        
-        <!-- PANTALLA 2: SELECCIONAR 3 NÚMEROS -->
-        <div id="apuestaScreen" class="screen hidden">
-            <div class="header">
-                <h1> ELIGE 3 NÚMEROS</h1>
-                <div class="subtitle" id="bienvenidaTexto"></div>
-            </div>
+    </div>
+
+    <!-- PANTALLA DEL JUEGO (INICIALMENTE OCULTA) -->
+    <div id="juegoScreen" class="game-screen">
+        <div class="container">
             
-            <div class="selected-counter">
-                <p> Tus números seleccionados</p>
-                <div class="selected-numbers" id="selectedNumbersDisplay">
-                    <div class="selected-badge empty">_</div>
-                    <div class="selected-badge empty">_</div>
-                    <div class="selected-badge empty">_</div>
+            <!-- PANTALLA 1: REGISTRO -->
+            <div id="registroScreen" class="screen">
+                <div class="header">
+                    <img src="logo_tv.png" alt="Ruleta TV" class="logo">
                 </div>
+                
+                <div class="time-badge">
+                     JUGA GRATIS!!! SOLO PARA MAYORES DE 18 AÑOS
+                </div>
+                
+                <div class="input-group">
+                    <input type="text" id="nombre" placeholder="NOMBRE (Primer nombre del DNI)" maxlength="30" autocomplete="off">
+                    <small>*Solo el primer nombre</small>
+                </div>
+                
+                <div class="input-group">
+                    <input type="text" id="dni" placeholder="ULTIMAS 3 CIFRAS DEL DNI" maxlength="3" inputmode="numeric">
+                    <small>*Para asegurar una sola apuesta por persona</small>
+                </div>
+                
+                <div class="input-group">
+                    <select id="codigoArea" class="input-select" required>
+                        <option value="" hidden selected>INGRESÁ TU CÓDIGO DE ÁREA</option>
+                        <option value="387">387</option>
+                        <option value="3868">3868</option>
+                        <option value="3873">3873</option>
+                        <option value="3878">3878</option>
+                        <option value="3876">3876</option>
+                        <option value="3877">3877</option>
+                        <option value="3887">3887</option>
+                        <option value="3885">3885</option>
+                    </select>
+                    <small>*Código de área</small>
+                </div>
+                
+                <div class="input-group">
+                    <input type="tel" id="celular" placeholder="NÚMERO DE CELULAR" autocomplete="off">
+                    <small>*Para contactarte si ganas</small>
+                </div>
+                
+                <button class="btn-primary" onclick="registrarJugador()"> COMENZAR </button>
+                <div class="footer">Una apuesta por persona</div>
             </div>
             
-            <div class="numbers-board">
-                <div class="numbers-grid" id="numbersGrid"></div>
+            <!-- PANTALLA 2: SELECCIONAR 3 NÚMEROS -->
+            <div id="apuestaScreen" class="screen hidden">
+                <div class="header">
+                    <h1> ELIGE 3 NÚMEROS</h1>
+                    <div class="subtitle" id="bienvenidaTexto"></div>
+                </div>
+                
+                <div class="selected-counter">
+                    <p> Tus números seleccionados</p>
+                    <div class="selected-numbers" id="selectedNumbersDisplay">
+                        <div class="selected-badge empty">_</div>
+                        <div class="selected-badge empty">_</div>
+                        <div class="selected-badge empty">_</div>
+                    </div>
+                </div>
+                
+                <div class="numbers-board">
+                    <div class="numbers-grid" id="numbersGrid"></div>
+                </div>
+                
+                <button class="btn-primary" id="confirmarBtn" onclick="confirmarApuesta()" disabled> CONFIRMAR APUESTA</button>
             </div>
             
-            <button class="btn-primary" id="confirmarBtn" onclick="confirmarApuesta()" disabled> CONFIRMAR APUESTA</button>
-        </div>
-        
-        <!-- PANTALLA 3: YA APOSTÓ -->
-        <div id="yaApostoScreen" class="screen hidden">
-            <div class="header">
-                <h1> YA APOSTASTE</h1>
-                <div class="subtitle" id="yaApostoMensaje"></div>
+            <!-- PANTALLA 3: YA APOSTÓ -->
+            <div id="yaApostoScreen" class="screen hidden">
+                <div class="header">
+                    <h1> YA APOSTASTE</h1>
+                    <div class="subtitle" id="yaApostoMensaje"></div>
+                </div>
+			<button class="btn-primary" onclick="reiniciar()">VOLVER AL INICIO</button>
             </div>
-            <div style="text-align: center; font-size: 3em; margin: 20px 0;">🎰</div>
-            <button class="btn-primary" onclick="reiniciar()">VOLVER AL INICIO</button>
+            
+            <!-- PANTALLA 4: ÉXITO -->
+            <div id="exitoScreen" class="screen success-screen hidden">
+                <div class="success-icon">✅</div>
+                <h1>¡APUESTA REGISTRADA!</h1>
+                <div class="apuesta-info" id="resumenApuesta"></div>
+                <div class="subtitle"> Sintoniza nuestro programa de TV para ver el resultado</div>
+                <button class="btn-primary" onclick="reiniciar()">VOLVER AL INICIO</button>
+            </div>
+            
         </div>
-        
-        <!-- PANTALLA 4: ÉXITO -->
-        <div id="exitoScreen" class="screen success-screen hidden">
-            <div class="success-icon">✅</div>
-            <h1>¡APUESTA REGISTRADA!</h1>
-            <div class="apuesta-info" id="resumenApuesta"></div>
-            <div class="subtitle"> Sintoniza el programa para ver el resultado</div>
-            <button class="btn-primary" onclick="reiniciar()">VOLVER AL INICIO</button>
-        </div>
-        
     </div>
     
     <div id="floatingMessage" class="message"></div>
@@ -453,18 +437,6 @@
             return `${primerNombre}_${dni}`;
         }
         
-        async function verificarDniEnFirebase(dni) {
-            try {
-                const querySnapshot = await db.collection('apuestas')
-                    .where('dni', '==', dni)
-                    .get();
-                return !querySnapshot.empty;
-            } catch(error) {
-                console.error('Error:', error);
-                return false;
-            }
-        }
-        
         async function guardarApuestaEnFirebase(apuesta) {
             try {
                 await db.collection('apuestas').add({
@@ -487,7 +459,6 @@
             const idUnico = crearIdUnico(nombre, dni);
             
             try {
-                // REGLA 1: Mismo nombre + mismo DNI
                 const mismaCombinacion = await db.collection('apuestas')
                     .where('idUnico', '==', idUnico)
                     .get();
@@ -497,7 +468,6 @@
                     return { permitido: false, razon: 'Ya estás participando' };
                 }
                 
-                // REGLA 2: Mismo número de celular
                 const mismoCelular = await db.collection('apuestas')
                     .where('celular', '==', celular)
                     .get();
@@ -519,22 +489,18 @@
         function generarTablero() {
             const grid = document.getElementById('numbersGrid');
             grid.innerHTML = '';
-            
             for (let i = 0; i <= 36; i++) {
                 const btn = document.createElement('div');
                 btn.className = 'number-btn';
                 btn.setAttribute('data-color', coloresNumeros[i]);
                 btn.textContent = i;
-                btn.onclick = (function(num) {
-                    return function() { toggleNumero(num); };
-                })(i);
+                btn.onclick = (function(num) { return function() { toggleNumero(num); }; })(i);
                 grid.appendChild(btn);
             }
         }
         
         function toggleNumero(num) {
             const index = jugadorActual.numeros.indexOf(num);
-            
             if (index === -1) {
                 if (jugadorActual.numeros.length >= 3) {
                     mostrarMensaje('⚠️ Solo puedes elegir 3 números', 'error');
@@ -550,7 +516,6 @@
                 mostrarMensaje(`❌ Número ${num} removido`, 'success');
                 if (navigator.vibrate) navigator.vibrate(50);
             }
-            
             actualizarUI();
         }
         
@@ -558,9 +523,7 @@
             const badges = document.querySelectorAll('#selectedNumbersDisplay .selected-badge');
             if (badges[posicion]) {
                 badges[posicion].classList.add('filled');
-                setTimeout(() => {
-                    badges[posicion].classList.remove('filled');
-                }, 200);
+                setTimeout(() => { badges[posicion].classList.remove('filled'); }, 200);
             }
         }
         
@@ -575,7 +538,6 @@
                     badges[i].classList.add('empty');
                 }
             }
-            
             const botones = document.querySelectorAll('.number-btn');
             botones.forEach(btn => {
                 const num = parseInt(btn.textContent);
@@ -585,7 +547,6 @@
                     btn.classList.remove('selected');
                 }
             });
-            
             const confirmarBtn = document.getElementById('confirmarBtn');
             confirmarBtn.disabled = jugadorActual.numeros.length !== 3;
         }
@@ -593,33 +554,36 @@
         async function registrarJugador() {
             const nombre = document.getElementById('nombre').value.trim();
             const dni = document.getElementById('dni').value.trim();
-            const celular = document.getElementById('celular').value.trim();
+            const codigoArea = document.getElementById('codigoArea').value;
+            const celularNumero = document.getElementById('celular').value.trim();
             
             if (!nombre) {
                 mostrarMensaje('Ingresa tu nombre', 'error');
                 return;
             }
-            
             const primerNombre = nombre.split(' ')[0];
             if (primerNombre.length < 2) {
                 mostrarMensaje('Ingresa tu nombre completo (mínimo 2 letras)', 'error');
                 return;
             }
-            
             if (!dni || dni.length !== 3 || !/^\d+$/.test(dni)) {
                 mostrarMensaje('Ingresa los 3 últimos dígitos de tu DNI', 'error');
                 return;
             }
-            
-            if (!celular) {
+            if (!codigoArea) {
+                mostrarMensaje('Selecciona un código de área', 'error');
+                return;
+            }
+            if (!celularNumero) {
                 mostrarMensaje('El número de celular es obligatorio', 'error');
                 return;
             }
             
+            const celularCompleto = `${codigoArea}${celularNumero}`;
             mostrarMensaje('Verificando...', 'success');
             
             const ip = await obtenerIP();
-            const verificacion = await verificarPuedeApostar(nombre, dni, celular);
+            const verificacion = await verificarPuedeApostar(nombre, dni, celularCompleto);
             
             if (!verificacion.permitido) {
                 document.getElementById('registroScreen').classList.add('hidden');
@@ -632,7 +596,7 @@
             
             jugadorActual.nombre = nombre;
             jugadorActual.dni = dni;
-            jugadorActual.celular = celular;
+            jugadorActual.celular = celularCompleto;
             jugadorActual.numeros = [];
             jugadorActual.idUnico = idUnico;
             jugadorActual.ip = ip;
@@ -655,20 +619,6 @@
                 return;
             }
             
-            // Protección: 60 segundos entre apuestas
-           // const ULTIMA_APUESTA_KEY = 'ultimaApuesta';
-            //const ultimaApuesta = localStorage.getItem(ULTIMA_APUESTA_KEY);
-            
-            //if (ultimaApuesta) {
-              //  const tiempoTranscurrido = Date.now() - parseInt(ultimaApuesta);
-                //if (tiempoTranscurrido < 60000) {
-                  //  const segundosRestantes = Math.ceil((60000 - tiempoTranscurrido) / 1000);
-                    //mostrarMensaje(`⚠️ Espera ${segundosRestantes} segundos`, 'error');
-                    //if (navigator.vibrate) navigator.vibrate(200);
-                    //return;
-                //}
-            //}
-            
             jugadorActual.numeros.sort((a, b) => a - b);
             
             const nuevaApuesta = {
@@ -685,18 +635,15 @@
             const guardado = await guardarApuestaEnFirebase(nuevaApuesta);
             
             if (guardado) {
-               
                 const numerosTexto = jugadorActual.numeros.join(', ');
                 const resumenHTML = `
                     <p> <span>${jugadorActual.nombre}</span></p>
                     <p> Tu DNI termina en: <span>${jugadorActual.dni}</span></p>
                     <p> Tus números: <span style="font-size:1.2em;">${numerosTexto}</span></p>
                 `;
-                
                 document.getElementById('resumenApuesta').innerHTML = resumenHTML;
                 document.getElementById('apuestaScreen').classList.add('hidden');
                 document.getElementById('exitoScreen').classList.remove('hidden');
-                
                 if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
                 mostrarMensaje('✅ ¡Apuesta registrada!', 'success');
             } else {
@@ -716,17 +663,9 @@
         function reiniciar() {
             document.getElementById('nombre').value = '';
             document.getElementById('dni').value = '';
+            document.getElementById('codigoArea').value = '';
             document.getElementById('celular').value = '';
-            
-            jugadorActual = {
-                nombre: '',
-                dni: '',
-                celular: '',
-                numeros: [],
-                idUnico: '',
-                ip: ''
-            };
-            
+            jugadorActual = { nombre: '', dni: '', celular: '', numeros: [], idUnico: '', ip: '' };
             document.getElementById('yaApostoScreen').classList.add('hidden');
             document.getElementById('exitoScreen').classList.add('hidden');
             document.getElementById('apuestaScreen').classList.add('hidden');
@@ -734,7 +673,31 @@
             if (document.getElementById('numbersGrid')) actualizarUI();
         }
         
-        console.log('✅ Ruleta TV - Frontend mejorado');
+        // === CONTROL DE AUDIO ===
+        function iniciarMusica() {
+            const audio = document.getElementById('musicaFondo');
+            audio.play().catch(error => {
+                console.log('Autoplay bloqueado, esperando interacción...');
+            });
+        }
+        
+        // === CONTROL DEL JUEGO ===
+        function iniciarJuego() {
+            // Ocultar pantalla de bienvenida
+            document.getElementById('welcomeScreen').style.display = 'none';
+            // Mostrar el juego
+            document.getElementById('juegoScreen').style.display = 'block';
+            // Intentar reproducir música si no lo hizo antes
+            const audio = document.getElementById('musicaFondo');
+            if (audio.paused) {
+                audio.play();
+            }
+        }
+        
+        // Intentar reproducir audio al cargar
+        document.addEventListener('DOMContentLoaded', iniciarMusica);
+        
+        console.log('✅ Ruleta TV - Frontend mejorado con código de área y pantalla de bienvenida');
     </script>
 </body>
 </html>
